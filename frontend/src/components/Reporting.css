@@ -1,0 +1,136 @@
+.reporting-module {
+    display: flex;
+    flex-direction: column;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-lg);
+}
+
+.metric-card {
+    background: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border-color: rgba(255, 193, 7, 0.3);
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.metric-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: 500;
+}
+
+.metric-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-primary-light {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.metric-value {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: var(--spacing-xs);
+    letter-spacing: -0.02em;
+}
+
+.metric-trend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+}
+
+.chart-row {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.chart-card {
+    background: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.spend-chart {
+    flex: 3;
+}
+
+.lanes-table-card {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-title {
+    color: #fff;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.chart-subtitle {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.chart-wrapper {
+    margin-top: var(--spacing-lg);
+    width: 100%;
+}
+
+.chart-loader {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+}
+
+/* Custom Tooltip background override for Recharts */
+.recharts-default-tooltip {
+    background-color: #111827 !important;
+    border: 1px solid #374151 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
+}
+
+.recharts-tooltip-item {
+    color: #fff !important;
+}
+
+.recharts-tooltip-label {
+    color: #A0AEC0 !important;
+    margin-bottom: 4px !important;
+}
+
+.w-full {
+    width: 100%;
+}

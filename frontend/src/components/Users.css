@@ -1,0 +1,133 @@
+.users-module {
+    /* Set fixed height if needed to fill layout */
+    height: calc(100vh - 120px);
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.users-table th,
+.users-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.users-table th {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: var(--color-surface-base);
+}
+
+/* Custom Role Select Dropdown Styling */
+.role-selector-wrapper {
+    display: inline-block;
+}
+
+.role-badge {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 2px 24px 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.role-badge:hover,
+.role-badge:focus {
+    border-color: rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+.role-badge:disabled {
+    opacity: 0.5;
+    cursor: wait;
+}
+
+.role-chevron {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Role Specific Colors */
+.role-admin {
+    background-color: rgba(0, 229, 255, 0.15);
+    /* Accent cyan */
+    color: var(--color-accent);
+}
+
+.role-admin option {
+    background: var(--color-surface-highlight);
+    color: var(--color-text-primary);
+}
+
+.role-dispatcher {
+    background-color: rgba(162, 132, 94, 0.15);
+    /* Secondary gold */
+    color: var(--color-secondary);
+}
+
+.role-dispatcher option {
+    background: var(--color-surface-highlight);
+    color: var(--color-text-primary);
+}
+
+.role-driver {
+    background-color: rgba(156, 163, 175, 0.15);
+    /* Gray */
+    color: #cbd5e1;
+}
+
+.role-driver option {
+    background: var(--color-surface-highlight);
+    color: var(--color-text-primary);
+}
+
+.role-customer {
+    background-color: rgba(74, 222, 128, 0.15);
+    /* Green */
+    color: var(--color-success);
+}
+
+.role-customer option {
+    background: var(--color-surface-highlight);
+    color: var(--color-text-primary);
+}
+
+/* Status Pills */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: rgba(74, 222, 128, 0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(74, 222, 128, 0.2);
+}
+
+.status-inactive {
+    background-color: rgba(248, 113, 113, 0.1);
+    color: var(--color-error);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+}

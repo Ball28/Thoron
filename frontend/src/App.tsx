@@ -5,6 +5,11 @@ import { Shipments } from './components/Shipments';
 import { RateQuoting } from './components/RateQuoting';
 import { Carriers } from './components/Carriers';
 import { Tracking } from './components/Tracking';
+import { Reporting } from './components/Reporting';
+import { Documents } from './components/Documents';
+import { Invoices } from './components/Invoices';
+import { Orders } from './components/Orders';
+import { Users } from './components/Users';
 import './App.css';
 
 function App() {
@@ -78,6 +83,16 @@ function App() {
         return <Carriers />;
       case 'tracking':
         return <Tracking />;
+      case 'reporting':
+        return <Reporting />;
+      case 'documents':
+        return <Documents />;
+      case 'invoices':
+        return <Invoices />;
+      case 'orders':
+        return <Orders />;
+      case 'users':
+        return <Users />;
       default:
         return <div className="card"><h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Module</h2><p className="text-muted">Module in development</p></div>;
     }

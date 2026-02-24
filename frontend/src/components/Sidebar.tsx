@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, PackageSearch, Users, Activity, Settings, BarChart3, FileText } from 'lucide-react';
+import { LayoutDashboard, Truck, CalendarCheck, Users, BarChart2, FileText, DollarSign, Settings, Package, Shield } from 'lucide-react';
 import './Sidebar.css';
 
 interface SidebarProps {
@@ -8,12 +8,15 @@ interface SidebarProps {
 }
 
 const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Activity },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'shipments', label: 'Shipments', icon: Truck },
-    { id: 'quotes', label: 'Rate Quoting', icon: PackageSearch },
     { id: 'carriers', label: 'Carriers', icon: Users },
-    { id: 'reporting', label: 'Reporting', icon: BarChart3 },
+    { id: 'orders', label: 'Load Planning', icon: Package },
+    { id: 'tracking', label: 'Tracking', icon: Truck },
+    { id: 'reporting', label: 'Reporting', icon: BarChart2 },
+    { id: 'invoices', label: 'Freight Audit', icon: DollarSign },
     { id: 'documents', label: 'Documents', icon: FileText },
+    { id: 'users', label: 'Access Control', icon: Shield },
     { id: 'settings', label: 'Settings', icon: Settings },
 ];
 

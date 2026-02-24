@@ -126,7 +126,6 @@ Thoron/
 
 | Method | Route | Description |
 |---|---|---|
-| GET | `/api/health` | Health check |
 | GET | `/api/shipments` | List all shipments |
 | POST | `/api/shipments` | Create a new shipment |
 | POST | `/api/quotes` | Get carrier rate quotes (simulated) |
@@ -136,6 +135,18 @@ Thoron/
 | PUT | `/api/carriers/:id` | Update a carrier |
 | DELETE | `/api/carriers/:id` | Remove a carrier |
 | POST | `/api/carriers/reset` | Drop + recreate + seed the carriers table |
+| POST | `/api/tracking/reset` | Drop + recreate + seed tracking, orders, and users tables |
+| GET | `/api/tracking/:number` | Get shipment details timeline by tracking number |
+| GET | `/api/stats` | Get top-level dashboard metrics |
+| GET | `/api/documents` | List uploaded documents |
+| POST | `/api/documents` | Upload a document |
+| DELETE| `/api/documents/:id` | Delete a document |
+| GET | `/api/invoices` | List carrier invoices |
+| PUT | `/api/invoices/:id/status`| Update invoice status |
+| GET | `/api/orders` | List unassigned orders |
+| POST | `/api/orders/plan` | Plan orders into a single shipment |
+| GET | `/api/users` | List system users |
+| PUT | `/api/users/:id/role` | Update user access role |
 
 ---
 
@@ -180,6 +191,14 @@ Carrier Management module:
 - Click any carrier row to open its scorecard (on-time %, claim rate, rating, insurance, MC/DOT, contact info)
 - **Add Carrier** modal form with company info and contact fields
 - **Remove Carrier** with confirmation prompt
+
+#### Additional Modules Included:
+- **Tracking & Visibility**: Real-time shipment event timelines.
+- **Reporting & Analytics**: Recharts visualizations for freight spend and SLA adherence.
+- **Document Management**: Centralized repository for BOLs, PODs, and Customs paperwork.
+- **Freight Audit & Payment**: Interactive invoice discrepancy resolution (Approve vs Dispute).
+- **Order & Load Planning**: Dual-pane drag/drop consolidation of LTL orders into Full Truckload shipments.
+- **User Management**: Inline status and role access controller.
 
 ---
 
@@ -249,12 +268,12 @@ All color and spacing values are defined as CSS variables in `frontend/src/index
 | Shipment Management | ✅ Complete |
 | Rate Shopping & Quoting | ✅ Complete |
 | Carrier Management | ✅ Complete |
-| Tracking & Visibility Dashboard | 🔲 Planned |
-| Reporting & Analytics | 🔲 Planned |
-| Document Management | 🔲 Planned |
-| Freight Audit & Payment | 🔲 Planned |
-| Order & Load Planning | 🔲 Planned |
-| User & Role Management | 🔲 Planned |
+| Tracking & Visibility Dashboard | ✅ Complete |
+| Reporting & Analytics | ✅ Complete |
+| Document Management | ✅ Complete |
+| Freight Audit & Payment | ✅ Complete |
+| Order & Load Planning | ✅ Complete |
+| User & Role Management | ✅ Complete |
 
 ---
 

@@ -121,11 +121,15 @@ app.post('/api/carriers/reset', (req: Request, res: Response) => {
     });
 });
 
-// Dev reset: drop + recreate + reseed shipments and events
+// Reset data (for demo purposes)
 app.post('/api/tracking/reset', (req: Request, res: Response) => {
     db.serialize(() => {
-        db.run(`DROP TABLE IF EXISTS shipment_events`);
-        db.run(`DROP TABLE IF EXISTS shipments`);
+        db.run('DROP TABLE IF EXISTS shipment_events');
+        db.run('DROP TABLE IF EXISTS documents');
+        db.run('DROP TABLE IF EXISTS invoices');
+        db.run('DROP TABLE IF EXISTS orders');
+        db.run('DROP TABLE IF EXISTS users');
+        db.run('DROP TABLE IF EXISTS shipments');
         db.run(`CREATE TABLE shipments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             origin TEXT NOT NULL, destination TEXT NOT NULL,
@@ -141,6 +145,47 @@ app.post('/api/tracking/reset', (req: Request, res: Response) => {
             eventType TEXT NOT NULL, location TEXT, message TEXT,
             eventTime DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(shipmentId) REFERENCES shipments(id)
+        )`);
+        db.run(`CREATE TABLE documents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            shipmentId INTEGER,
+            type TEXT NOT NULL, filename TEXT NOT NULL, size INTEGER NOT NULL,
+            status TEXT DEFAULT 'Verified',
+            uploadedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(shipmentId) REFERENCES shipments(id)
+        )`);
+        db.run(`CREATE TABLE invoices (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            shipmentId INTEGER NOT NULL,
+            carrierId INTEGER NOT NULL,
+            invoiceNumber TEXT NOT NULL,
+            quotedAmount REAL NOT NULL,
+            actualAmount REAL NOT NULL,
+            status TEXT DEFAULT 'Pending',
+            dueDate DATETIME,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(shipmentId) REFERENCES shipments(id),
+            FOREIGN KEY(carrierId) REFERENCES carriers(id)
+        )`);
+        db.run(`CREATE TABLE orders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            customerName TEXT NOT NULL,
+            poNumber TEXT NOT NULL,
+            origin TEXT NOT NULL,
+            destination TEXT NOT NULL,
+            weight REAL NOT NULL,
+            dimensions TEXT,
+            status TEXT DEFAULT 'Unplanned',
+            shipmentId INTEGER,
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(shipmentId) REFERENCES shipments(id)
+        )`);
+        db.run(`CREATE TABLE users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL, email TEXT UNIQUE NOT NULL,
+            role TEXT NOT NULL, department TEXT,
+            lastLogin DATETIME, status TEXT DEFAULT 'Active',
+            createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
         const shipments = [
             ['Chicago, IL', 'Dallas, TX', 1850, '48x40x48', '70', 'In Transit', 1, 'OLD-4491-2024', '2026-02-26'],
@@ -171,7 +216,51 @@ app.post('/api/tracking/reset', (req: Request, res: Response) => {
             ];
             const eStmt = db.prepare(`INSERT INTO shipment_events (shipmentId,eventType,location,message,eventTime) VALUES (?,?,?,?,?)`);
             events.forEach(e => eStmt.run(...e));
-            eStmt.finalize(() => res.json({ message: 'Shipments and events seeded.' }));
+            eStmt.finalize(() => {
+                const docs: any[] = [
+                    [1, 'BOL', 'BOL-4491.pdf', 1250000, 'Verified'],
+                    [1, 'Customs', 'commercial_invoice_CA.pdf', 850000, 'Verified'],
+                    [2, 'Rate Confirmation', 'RateCon-XPO-8823.pdf', 450000, 'Pending'],
+                    [3, 'POD', 'POD_signed_Garcia.pdf', 2100000, 'Verified'],
+                    [3, 'Invoice', 'INV-FDX-2211.pdf', 520000, 'Verified'],
+                    [5, 'BOL', 'BOL-WNR-5512.pdf', 980000, 'Verified']
+                ];
+                const docStmt = db.prepare(`INSERT INTO documents (shipmentId, type, filename, size, status) VALUES (?, ?, ?, ?, ?)`);
+                docs.forEach(d => docStmt.run(...d));
+                docStmt.finalize(() => {
+                    const invoices: any[] = [
+                        [1, 1, 'INV-4491-A', 1850, 1850, 'Approved', '2026-03-26'],
+                        [2, 2, 'INV-8823-B', 3400, 3600, 'Disputed', '2026-03-27'], // Discrepancy (detention or accessorials)
+                        [3, 3, 'INV-2211-C', 920, 920, 'Paid', '2026-03-23'],
+                        [4, 4, 'INV-9944-D', 2100, 2100, 'Pending', '2026-03-25'],
+                    ];
+                    const invStmt = db.prepare(`INSERT INTO invoices (shipmentId, carrierId, invoiceNumber, quotedAmount, actualAmount, status, dueDate) VALUES (?, ?, ?, ?, ?, ?, ?)`);
+                    invoices.forEach(i => invStmt.run(...i));
+                    invStmt.finalize(() => {
+                        const orders: any[] = [
+                            ['Acme Corp', 'PO-9921', 'Cleveland, OH', 'Houston, TX', 4500, '4 Pallets', 'Unplanned', null],
+                            ['Globex Inc', 'PO-A441', 'Cleveland, OH', 'Houston, TX', 6200, '6 Pallets', 'Unplanned', null],
+                            ['Stark Ind', 'PO-X920', 'Seattle, WA', 'Portland, OR', 12000, '12 Pallets', 'Unplanned', null],
+                            ['Wayne Ent', 'PO-B811', 'Seattle, WA', 'Portland, OR', 3000, '3 Pallets', 'Unplanned', null],
+                            // Planned orders on existing generic shipment 6
+                            ['Cyberdyne', 'PO-T800', 'Boston, MA', 'Charlotte, NC', 450, '36x24x24', 'Planned', 6],
+                        ];
+                        const orderStmt = db.prepare(`INSERT INTO orders (customerName, poNumber, origin, destination, weight, dimensions, status, shipmentId) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`);
+                        orders.forEach(o => orderStmt.run(...o));
+                        orderStmt.finalize(() => {
+                            const users: any[] = [
+                                ['Admin User', 'admin@thoron.com', 'Admin', 'Management', '2026-02-24 08:00:00', 'Active'],
+                                ['Sarah Dispatch', 'sarah@thoron.com', 'Dispatcher', 'Operations', '2026-02-23 09:15:00', 'Active'],
+                                ['Mike Driver', 'mike@thoron.com', 'Driver', 'Fleet', '2026-02-24 06:30:00', 'Active'],
+                                ['Acme Logistics', 'portal@acmecorp.com', 'Customer', 'External', '2026-02-20 14:00:00', 'Active']
+                            ];
+                            const userStmt = db.prepare(`INSERT INTO users (name, email, role, department, lastLogin, status) VALUES (?, ?, ?, ?, ?, ?)`);
+                            users.forEach(u => userStmt.run(...u));
+                            userStmt.finalize(() => res.json({ message: 'Database fully reset and seeded (including users).' }));
+                        });
+                    });
+                });
+            });
         });
     });
 });
@@ -228,6 +317,201 @@ app.post('/api/tracking/:id/events', (req: Request, res: Response) => {
         function (this: any, err: Error | null) {
             if (err) return res.status(500).json({ error: err.message });
             res.json({ id: this.lastID, message: 'Event added' });
+        }
+    );
+});
+
+// --- Analytics API ---
+app.get('/api/analytics/kpis', (req: Request, res: Response) => {
+    // Return high-level stats: total spend, active shipments, avg on-time rate
+    res.json({
+        totalSpendYTD: 1245000,
+        activeShipments: 142,
+        avgOnTimeRate: 94.8,
+        exceptionRate: 2.1
+    });
+});
+
+app.get('/api/analytics/spend-trend', (req: Request, res: Response) => {
+    // Mock 6-month spend trend for area chart
+    res.json([
+        { month: 'Sep', spend: 180000, budget: 190000 },
+        { month: 'Oct', spend: 210000, budget: 195000 },
+        { month: 'Nov', spend: 195000, budget: 200000 },
+        { month: 'Dec', spend: 240000, budget: 210000 },
+        { month: 'Jan', spend: 185000, budget: 200000 },
+        { month: 'Feb', spend: 235000, budget: 215000 }
+    ]);
+});
+
+app.get('/api/analytics/carrier-performance', (req: Request, res: Response) => {
+    // Fetch carrier performance for scatter/bar charts
+    db.all(`SELECT name, onTimeRate * 100 as onTimePercent, rating, modes FROM carriers WHERE status = 'Active'`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+app.get('/api/analytics/lanes', (req: Request, res: Response) => {
+    // Mock top lanes
+    res.json([
+        { lane: 'Chicago → Dallas', volume: 342, avgCost: 1850 },
+        { lane: 'Atlanta → LA', volume: 289, avgCost: 3200 },
+        { lane: 'New York → Miami', volume: 215, avgCost: 2100 },
+        { lane: 'Seattle → Phoenix', volume: 178, avgCost: 2400 },
+        { lane: 'Houston → Denver', volume: 156, avgCost: 1650 }
+    ]);
+});
+
+// --- Documents API ---
+// List all documents with shipment tracking number
+app.get('/api/documents', (req: Request, res: Response) => {
+    const query = `
+        SELECT d.*, s.trackingNumber 
+        FROM documents d
+        LEFT JOIN shipments s ON d.shipmentId = s.id
+        ORDER BY d.uploadedAt DESC
+    `;
+    db.all(query, [], (err: Error | null, rows: any[]) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Upload (simulate) a document
+app.post('/api/documents', (req: Request, res: Response) => {
+    const { shipmentId, type, filename, size } = req.body;
+    db.run(
+        `INSERT INTO documents (shipmentId, type, filename, size, status) VALUES (?, ?, ?, ?, 'Pending')`,
+        [shipmentId || null, type, filename, size],
+        function (this: any, err: Error | null) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ id: this.lastID, message: 'Document uploaded successfully' });
+        }
+    );
+});
+
+// Delete a document
+app.delete('/api/documents/:id', (req: Request, res: Response) => {
+    db.run(
+        `DELETE FROM documents WHERE id = ?`,
+        [req.params.id],
+        function (this: any, err: Error | null) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0) return res.status(404).json({ error: 'Document not found' });
+            res.json({ message: 'Document deleted successfully' });
+        }
+    );
+});
+
+// --- Invoices API ---
+// Get all invoices enriched with shipment and carrier data
+app.get('/api/invoices', (req: Request, res: Response) => {
+    const query = `
+        SELECT i.*, 
+               s.trackingNumber, s.origin, s.destination,
+               c.name as carrierName
+        FROM invoices i
+        JOIN shipments s ON i.shipmentId = s.id
+        JOIN carriers c ON i.carrierId = c.id
+        ORDER BY i.createdAt DESC
+    `;
+    db.all(query, [], (err: Error | null, rows: any[]) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Update invoice status (Approve, Dispute, Paid)
+app.put('/api/invoices/:id/status', (req: Request, res: Response) => {
+    const { status } = req.body;
+    db.run(
+        `UPDATE invoices SET status = ? WHERE id = ?`,
+        [status, req.params.id],
+        function (this: any, err: Error | null) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0) return res.status(404).json({ error: 'Invoice not found' });
+            res.json({ message: 'Invoice status updated successfully' });
+        }
+    );
+});
+
+// --- Orders (Load Planning) API ---
+// Get all orders (optionally filter by status)
+app.get('/api/orders', (req: Request, res: Response) => {
+    const { status } = req.query;
+    let query = `SELECT * FROM orders`;
+    let params: any[] = [];
+    if (status) {
+        query += ` WHERE status = ?`;
+        params.push(status);
+    }
+    query += ` ORDER BY createdAt DESC`;
+
+    db.all(query, params, (err: Error | null, rows: any[]) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+// Plan orders into a single shipment (load)
+app.post('/api/orders/plan', (req: Request, res: Response) => {
+    const { orderIds, origin, destination, weight, dimensions } = req.body;
+    if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+        return res.status(400).json({ error: 'orderIds array is required' });
+    }
+
+    db.serialize(() => {
+        db.run('BEGIN TRANSACTION');
+
+        const stmt = db.prepare(`
+            INSERT INTO shipments (origin, destination, weight, dimensions, status)
+            VALUES (?, ?, ?, ?, 'Pending')
+        `);
+
+        stmt.run(origin, destination, weight, dimensions, function (this: any, err: Error | null) {
+            if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).json({ error: err.message });
+            }
+
+            const shipmentId = this.lastID;
+
+            // Update orders to point to new shipment and set status to Planned
+            const placeholders = orderIds.map(() => '?').join(',');
+            const updateQuery = `UPDATE orders SET status = 'Planned', shipmentId = ? WHERE id IN (${placeholders})`;
+
+            db.run(updateQuery, [shipmentId, ...orderIds], function (err2: Error | null) {
+                if (err2) {
+                    db.run('ROLLBACK');
+                    return res.status(500).json({ error: err2.message });
+                }
+
+                db.run('COMMIT');
+                res.json({ message: 'Load planned successfully', shipmentId });
+            });
+        });
+        stmt.finalize();
+    });
+});
+
+// --- Users API ---
+app.get('/api/users', (req: Request, res: Response) => {
+    db.all('SELECT * FROM users ORDER BY name ASC', [], (err: Error | null, rows: any[]) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+app.put('/api/users/:id/role', (req: Request, res: Response) => {
+    const { role } = req.body;
+    db.run(
+        `UPDATE users SET role = ? WHERE id = ?`,
+        [role, req.params.id],
+        function (this: any, err: Error | null) {
+            if (err) return res.status(500).json({ error: err.message });
+            if (this.changes === 0) return res.status(404).json({ error: 'User not found' });
+            res.json({ message: 'User role updated successfully' });
         }
     );
 });

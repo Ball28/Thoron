@@ -101,6 +101,60 @@ function initializeDatabase() {
       FOREIGN KEY(shipmentId) REFERENCES shipments(id)
     )`);
 
+    // Documents table
+    db.run(`CREATE TABLE IF NOT EXISTS documents (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      shipmentId INTEGER,
+      type TEXT NOT NULL,
+      filename TEXT NOT NULL,
+      size INTEGER NOT NULL,
+      status TEXT DEFAULT 'Verified',
+      uploadedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(shipmentId) REFERENCES shipments(id)
+    )`);
+
+    // Invoices table (Freight Audit & Payment)
+    db.run(`CREATE TABLE IF NOT EXISTS invoices (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      shipmentId INTEGER NOT NULL,
+      carrierId INTEGER NOT NULL,
+      invoiceNumber TEXT NOT NULL,
+      quotedAmount REAL NOT NULL,
+      actualAmount REAL NOT NULL,
+      status TEXT DEFAULT 'Pending',
+      dueDate DATETIME,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(shipmentId) REFERENCES shipments(id),
+      FOREIGN KEY(carrierId) REFERENCES carriers(id)
+    )`);
+
+    // Orders table (Load Planning)
+    db.run(`CREATE TABLE IF NOT EXISTS orders (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customerName TEXT NOT NULL,
+      poNumber TEXT NOT NULL,
+      origin TEXT NOT NULL,
+      destination TEXT NOT NULL,
+      weight REAL NOT NULL,
+      dimensions TEXT,
+      status TEXT DEFAULT 'Unplanned',
+      shipmentId INTEGER,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY(shipmentId) REFERENCES shipments(id)
+    )`);
+
+    // Users & Roles table
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      role TEXT NOT NULL,
+      department TEXT,
+      lastLogin DATETIME,
+      status TEXT DEFAULT 'Active',
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     // Seed demo data if shipments is empty
     db.get('SELECT COUNT(*) as count FROM shipments', (err: Error | null, row: any) => {
       if (!err && row && row.count === 0) {
@@ -161,7 +215,21 @@ function seedDemoShipments() {
       VALUES (?, ?, ?, ?, ?)
     `);
     events.forEach(e => evtStmt.run(...e));
-    evtStmt.finalize(() => console.log('Seeded demo shipments and events.'));
+    evtStmt.finalize(() => {
+
+      // Seed some demo documents attached to these shipments
+      const docs: any[] = [
+        [1, 'BOL', 'BOL-4491.pdf', 1250000, 'Verified'],
+        [1, 'Customs', 'commercial_invoice_CA.pdf', 850000, 'Verified'],
+        [2, 'Rate Confirmation', 'RateCon-XPO-8823.pdf', 450000, 'Pending'],
+        [3, 'POD', 'POD_signed_Garcia.pdf', 2100000, 'Verified'],
+        [3, 'Invoice', 'INV-FDX-2211.pdf', 520000, 'Verified'],
+        [5, 'BOL', 'BOL-WNR-5512.pdf', 980000, 'Verified']
+      ];
+      const docStmt = db.prepare(`INSERT INTO documents (shipmentId, type, filename, size, status) VALUES (?, ?, ?, ?, ?)`);
+      docs.forEach(d => docStmt.run(...d));
+      docStmt.finalize(() => console.log('Seeded demo shipments, events, and documents.'));
+    });
   });
 }
 

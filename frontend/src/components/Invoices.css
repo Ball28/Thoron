@@ -1,0 +1,65 @@
+.invoices-module {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Quick Stats */
+.inv-stats-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+}
+
+.inv-stat-card {
+    background: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.inv-stat-card .stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.inv-stat-card .stat-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+/* Toolbar */
+.inv-toolbar {
+    flex-wrap: wrap;
+}
+
+/* Table */
+.inv-row {
+    transition: background var(--transition-fast);
+}
+
+.inv-row:hover {
+    background: var(--color-surface-hover);
+}
+
+.inv-status-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Actions */
+.inv-row .actions-cell {
+    opacity: 0.5;
+    transition: opacity var(--transition-fast);
+}
+
+.inv-row:hover .actions-cell {
+    opacity: 1;
+}

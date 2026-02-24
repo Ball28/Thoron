@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Search, Loader, CheckCircle, Clock, Navigation, Zap } from 'lucide-react';
+import { Search, Loader, CheckCircle, Clock, Navigation, Zap, Scale } from 'lucide-react';
+import { calculateDensityClass, NMFC_CLASSES } from '../utils/nmfc';
 import './RateQuoting.css';
 
 interface RateQuote {
@@ -15,11 +16,30 @@ export function RateQuoting() {
         origin: '',
         destination: '',
         weight: '',
+        length: '',
+        width: '',
+        height: '',
         freightClass: '50'
     });
     const [quotes, setQuotes] = useState<RateQuote[]>([]);
     const [loading, setLoading] = useState(false);
     const [searched, setSearched] = useState(false);
+
+    const handleDimensionChange = (field: 'weight' | 'length' | 'width' | 'height', value: string) => {
+        const newForm = { ...formData, [field]: value };
+
+        // Auto-calculate freight class if all dimensions and weight are present
+        const w = parseFloat(newForm.weight);
+        const l = parseFloat(newForm.length);
+        const wi = parseFloat(newForm.width);
+        const h = parseFloat(newForm.height);
+
+        if (!isNaN(w) && !isNaN(l) && !isNaN(wi) && !isNaN(h) && w > 0 && l > 0 && wi > 0 && h > 0) {
+            newForm.freightClass = calculateDensityClass(w, l, wi, h);
+        }
+
+        setFormData(newForm);
+    };
 
     const fetchQuotes = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -81,18 +101,32 @@ export function RateQuoting() {
                         <div className="form-grid-2 mt-md">
                             <div className="form-group mb-0">
                                 <label>Weight (lbs)</label>
-                                <input required type="number" placeholder="Enter weight" value={formData.weight} onChange={e => setFormData({ ...formData, weight: e.target.value })} disabled={loading} />
+                                <input required type="number" placeholder="Total weight" value={formData.weight} onChange={e => handleDimensionChange('weight', e.target.value)} disabled={loading} />
                             </div>
                             <div className="form-group mb-0">
-                                <label>Freight Class</label>
-                                <select value={formData.freightClass} onChange={e => setFormData({ ...formData, freightClass: e.target.value })} disabled={loading}>
-                                    <option value="50">50</option>
-                                    <option value="60">60</option>
-                                    <option value="70">70</option>
-                                    <option value="85">85</option>
-                                    <option value="100">100</option>
-                                </select>
+                                <label className="flex items-center gap-xs">Dimensions (L x W x H)</label>
+                                <div className="flex gap-xs">
+                                    <input type="number" placeholder="L in" value={formData.length} onChange={e => handleDimensionChange('length', e.target.value)} disabled={loading} className="w-full" />
+                                    <input type="number" placeholder="W in" value={formData.width} onChange={e => handleDimensionChange('width', e.target.value)} disabled={loading} className="w-full" />
+                                    <input type="number" placeholder="H in" value={formData.height} onChange={e => handleDimensionChange('height', e.target.value)} disabled={loading} className="w-full" />
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="form-group mt-sm mb-0">
+                            <div className="flex justify-between items-center mb-xs">
+                                <label className="mb-0">Freight Class (NMFC)</label>
+                                {formData.length && formData.width && formData.height && formData.weight ? (
+                                    <span className="text-xs text-accent flex items-center gap-xs font-medium">
+                                        <Scale size={12} /> Auto-calculated by density
+                                    </span>
+                                ) : null}
+                            </div>
+                            <select value={formData.freightClass} onChange={e => setFormData({ ...formData, freightClass: e.target.value })} disabled={loading}>
+                                {NMFC_CLASSES.map(cls => (
+                                    <option key={cls} value={cls}>Class {cls}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="flex gap-sm mt-lg">

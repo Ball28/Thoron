@@ -1,0 +1,223 @@
+.carriers-module {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Stats Bar */
+.carrier-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-md);
+}
+
+.stat-pill {
+    background-color: var(--color-surface-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-pill-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-pill-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Layout */
+.carriers-layout {
+    display: flex;
+    gap: var(--spacing-xl);
+    align-items: flex-start;
+}
+
+.carriers-table-panel {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Table toolbar */
+.table-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+/* Carrier avatar */
+.carrier-name-cell {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.carrier-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--color-surface-highlight), var(--color-surface-raised));
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--font-size-md);
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.row-selected {
+    background-color: rgba(255, 193, 7, 0.05) !important;
+    border-left: 3px solid var(--color-primary);
+}
+
+/* Mode chips */
+.modes-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.mode-chip {
+    background-color: var(--color-surface-highlight);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 1px 6px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Detail Panel */
+.carrier-detail-panel {
+    width: 340px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+}
+
+.scorecard-section,
+.detail-section {
+    background-color: var(--color-surface-raised);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.scorecard-title {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.scorecard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.scorecard-metric {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.metric-value {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.metric-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-top: 2px;
+}
+
+/* Detail rows */
+.detail-rows {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+}
+
+.detail-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+}
+
+.detail-value {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    display: flex;
+    align-items: center;
+    text-align: right;
+}
+
+.text-error {
+    color: var(--color-error);
+}
+
+.text-info {
+    color: var(--color-info);
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+}
+
+.modal-card {
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.add-carrier-form .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+}
+
+.form-section-title {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}

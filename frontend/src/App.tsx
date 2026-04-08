@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { AuthProvider, useAuth } from './components/AuthContext';
+import { Login } from './components/Login';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { Shipments } from './components/Shipments';
@@ -12,8 +14,24 @@ import { Orders } from './components/Orders';
 import { Users } from './components/Users';
 import './App.css';
 
-function App() {
+function AppContent() {
+  const { user, loading, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
+
+  // Show loading spinner while restoring session
+  if (loading) {
+    return (
+      <div className="auth-loading">
+        <div className="auth-loading-spinner" />
+        <p>Restoring session...</p>
+      </div>
+    );
+  }
+
+  // Show login page if not authenticated
+  if (!user) {
+    return <Login />;
+  }
 
   const renderContent = () => {
     switch (activeTab) {
@@ -113,7 +131,7 @@ function App() {
 
   return (
     <div className="app-container">
-      <Sidebar activeItem={activeTab} setActiveItem={setActiveTab} />
+      <Sidebar activeItem={activeTab} setActiveItem={setActiveTab} userRole={user.role} userName={user.name} onLogout={logout} />
       <main className="main-content">
         <Header title={getTitle()} />
         <div className="content-scroll">
@@ -121,6 +139,14 @@ function App() {
         </div>
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

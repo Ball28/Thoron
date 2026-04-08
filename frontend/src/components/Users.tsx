@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Shield, Mail, Building, Clock, ChevronDown, Check, UserPlus, Filter } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Users.css';
 
 interface UserRow {
@@ -16,13 +17,14 @@ interface UserRow {
 const ROLES = ['Admin', 'Dispatcher', 'Driver', 'Customer'];
 
 export function Users() {
+    const { authFetch } = useAuth();
     const [users, setUsers] = useState<UserRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [updatingId, setUpdatingId] = useState<number | null>(null);
 
     const fetchUsers = useCallback(async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/users');
+            const res = await authFetch('http://localhost:3001/api/users');
             if (res.ok) {
                 setUsers(await res.json());
             }
@@ -40,7 +42,7 @@ export function Users() {
     const handleRoleChange = async (userId: number, newRole: string) => {
         setUpdatingId(userId);
         try {
-            const res = await fetch(`http://localhost:3001/api/users/${userId}/role`, {
+            const res = await authFetch(`http://localhost:3001/api/users/${userId}/role`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: newRole })

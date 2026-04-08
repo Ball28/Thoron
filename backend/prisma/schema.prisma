@@ -1,14 +1,142 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  email        String    @unique
+  passwordHash String?
+  role         String
+  department   String?
+  tenantId     String    @default("default")
+  lastLogin    DateTime?
+  status       String    @default("Active")
+  createdAt    DateTime  @default(now())
+}
+
+model Carrier {
+  id             Int        @id @default(autoincrement())
+  name           String
+  mcNumber       String?
+  dotNumber      String?
+  contactName    String?
+  contactEmail   String?
+  contactPhone   String?
+  insuranceLimit Float      @default(100000)
+  serviceLevel   String?
+  modes          String?
+  onTimeRate     Float      @default(0.95)
+  claimRate      Float      @default(0.01)
+  rating         Float      @default(4.0)
+  status         String     @default("Active")
+  createdAt      DateTime   @default(now())
+
+  lanes          Lane[]
+  rates          Rate[]
+  shipments      Shipment[]
+  invoices       Invoice[]
+}
+
+model Lane {
+  id              Int      @id @default(autoincrement())
+  carrierId       Int?
+  originZone      String?
+  destinationZone String?
+
+  carrier         Carrier? @relation(fields: [carrierId], references: [id])
+  rates           Rate[]
+}
+
+model Rate {
+  id            Int      @id @default(autoincrement())
+  carrierId     Int?
+  laneId        Int?
+  freightClass  String?
+  baseRate      Float?
+  fuelSurcharge Float?
+
+  carrier       Carrier? @relation(fields: [carrierId], references: [id])
+  lane          Lane?    @relation(fields: [laneId], references: [id])
+}
+
+model Shipment {
+  id                Int       @id @default(autoincrement())
+  origin            String
+  destination       String
+  weight            Float
+  dimensions        String?
+  freightClass      String?
+  status            String    @default("Pending")
+  carrierId         Int?
+  trackingNumber    String?
+  estimatedDelivery String?
+  createdAt         DateTime  @default(now())
+
+  carrier           Carrier?  @relation(fields: [carrierId], references: [id])
+  events            ShipmentEvent[]
+  documents         Document[]
+  invoices          Invoice[]
+  orders            Order[]
+}
+
+model ShipmentEvent {
+  id         Int      @id @default(autoincrement())
+  shipmentId Int
+  eventType  String
+  location   String?
+  message    String?
+  eventTime  DateTime @default(now())
+
+  shipment   Shipment @relation(fields: [shipmentId], references: [id])
+}
+
+model Document {
+  id         Int      @id @default(autoincrement())
+  shipmentId Int?
+  type       String
+  filename   String
+  size       Int
+  status     String   @default("Verified")
+  uploadedAt DateTime @default(now())
+
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id])
+}
+
+model Invoice {
+  id            Int       @id @default(autoincrement())
+  shipmentId    Int
+  carrierId     Int
+  invoiceNumber String
+  quotedAmount  Float
+  actualAmount  Float
+  status        String    @default("Pending")
+  dueDate       DateTime?
+  createdAt     DateTime  @default(now())
+
+  shipment      Shipment  @relation(fields: [shipmentId], references: [id])
+  carrier       Carrier   @relation(fields: [carrierId], references: [id])
+}
+
+model Order {
+  id           Int      @id @default(autoincrement())
+  customerName String
+  poNumber     String
+  origin       String
+  destination  String
+  weight       Float
+  dimensions   String?
+  status       String   @default("Unplanned")
+  shipmentId   Int?
+  createdAt    DateTime @default(now())
+
+  shipment     Shipment? @relation(fields: [shipmentId], references: [id])
 }

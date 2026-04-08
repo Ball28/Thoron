@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { UploadCloud, FileText, Search, Download, Trash2, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Documents.css';
 
 interface DocumentRow {
@@ -35,6 +36,7 @@ const statusIcon = (status: string) => {
 };
 
 export function Documents() {
+    const { authFetch } = useAuth();
     const [documents, setDocuments] = useState<DocumentRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -43,7 +45,7 @@ export function Documents() {
 
     const fetchDocs = useCallback(async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/documents');
+            const res = await authFetch('http://localhost:3001/api/documents');
             if (res.ok) {
                 setDocuments(await res.json());
             }
@@ -75,7 +77,7 @@ export function Documents() {
         else if (name.includes('customs')) inferredType = 'Customs';
 
         try {
-            const res = await fetch('http://localhost:3001/api/documents', {
+            const res = await authFetch('http://localhost:3001/api/documents', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -99,7 +101,7 @@ export function Documents() {
     const handleDelete = async (id: number) => {
         if (!confirm('Delete this document?')) return;
         try {
-            const res = await fetch(`http://localhost:3001/api/documents/${id}`, { method: 'DELETE' });
+            const res = await authFetch(`http://localhost:3001/api/documents/${id}`, { method: 'DELETE' });
             if (res.ok) {
                 setDocuments(docs => docs.filter(d => d.id !== id));
             }

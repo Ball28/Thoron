@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Star, Phone, Mail, Shield, TrendingUp, AlertTriangle, Search, X, ChevronRight } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Carriers.css';
 
 interface Carrier {
@@ -27,6 +28,7 @@ const emptyForm = {
 };
 
 export function Carriers() {
+    const { authFetch } = useAuth();
     const [carriers, setCarriers] = useState<Carrier[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -38,7 +40,7 @@ export function Carriers() {
 
     const fetchCarriers = async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/carriers');
+            const res = await authFetch('http://localhost:3001/api/carriers');
             setCarriers(await res.json());
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
@@ -47,7 +49,7 @@ export function Carriers() {
     const handleAddCarrier = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await fetch('http://localhost:3001/api/carriers', {
+            await authFetch('http://localhost:3001/api/carriers', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
@@ -60,7 +62,7 @@ export function Carriers() {
 
     const handleDelete = async (id: number) => {
         if (!confirm('Remove this carrier from the network?')) return;
-        await fetch(`http://localhost:3001/api/carriers/${id}`, { method: 'DELETE' });
+        await authFetch(`http://localhost:3001/api/carriers/${id}`, { method: 'DELETE' });
         setSelected(null);
         fetchCarriers();
     };

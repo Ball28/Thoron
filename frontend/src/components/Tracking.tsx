@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Search, AlertTriangle, CheckCircle, Truck, Package, Clock, MapPin, RefreshCw, ChevronRight } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Tracking.css';
 
 interface ShipmentRow {
@@ -78,6 +79,7 @@ function formatDate(dt: string) {
 }
 
 export function Tracking() {
+    const { authFetch } = useAuth();
     const [shipments, setShipments] = useState<ShipmentRow[]>([]);
     const [selected, setSelected] = useState<ShipmentDetail | null>(null);
     const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ export function Tracking() {
     const fetchBoard = useCallback(async () => {
         setRefreshing(true);
         try {
-            const res = await fetch('http://localhost:3001/api/tracking');
+            const res = await authFetch('http://localhost:3001/api/tracking');
             setShipments(await res.json());
         } catch (e) { console.error(e); }
         finally { setLoading(false); setRefreshing(false); }
@@ -96,7 +98,7 @@ export function Tracking() {
 
     const fetchDetail = async (id: number) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/tracking/${id}`);
+            const res = await authFetch(`http://localhost:3001/api/tracking/${id}`);
             setSelected(await res.json());
         } catch (e) { console.error(e); }
     };

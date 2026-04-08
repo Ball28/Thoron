@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Package, Truck, Network, CheckCircle, ArrowRight, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Package, Truck, Network, ShieldCheck, ArrowRight, AlertTriangle } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Orders.css';
 
 interface OrderRow {
@@ -15,6 +16,7 @@ interface OrderRow {
 }
 
 export function Orders() {
+    const { authFetch } = useAuth();
     const [orders, setOrders] = useState<OrderRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -22,7 +24,7 @@ export function Orders() {
 
     const fetchOrders = useCallback(async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/orders?status=Unplanned');
+            const res = await authFetch('http://localhost:3001/api/orders?status=Unplanned');
             if (res.ok) {
                 setOrders(await res.json());
             }
@@ -65,7 +67,7 @@ export function Orders() {
         const dimensions = `${selectedOrders.length} Orders Consolidated`;
 
         try {
-            const res = await fetch('http://localhost:3001/api/orders/plan', {
+            const res = await authFetch('http://localhost:3001/api/orders/plan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Filter, Search, MoreVertical, MapPin, Truck as TruckIcon } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Shipments.css';
 
 interface Shipment {
@@ -17,6 +18,7 @@ interface Shipment {
 }
 
 export function Shipments() {
+    const { authFetch } = useAuth();
     const [shipments, setShipments] = useState<Shipment[]>([]);
     const [loading, setLoading] = useState(true);
     const [showCreateForm, setShowCreateForm] = useState(false);
@@ -27,7 +29,7 @@ export function Shipments() {
 
     const fetchShipments = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/shipments');
+            const response = await authFetch('http://localhost:3001/api/shipments');
             const data = await response.json();
             setShipments(data);
             setLoading(false);
@@ -49,7 +51,7 @@ export function Shipments() {
     const handleCreateShipment = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3001/api/shipments', {
+            const response = await authFetch('http://localhost:3001/api/shipments', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

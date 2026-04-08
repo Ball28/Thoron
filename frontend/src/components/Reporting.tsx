@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { DollarSign, Truck, Clock, AlertTriangle, ArrowUpRight, ArrowDownRight, DownloadCloud } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Reporting.css';
 
 interface KPI {
@@ -11,6 +12,7 @@ interface KPI {
 }
 
 export function Reporting() {
+    const { authFetch } = useAuth();
     const [kpis, setKpis] = useState<KPI | null>(null);
     const [spendTrend, setSpendTrend] = useState<any[]>([]);
     const [carrierPerf, setCarrierPerf] = useState<any[]>([]);
@@ -21,10 +23,10 @@ export function Reporting() {
         async function fetchData() {
             try {
                 const [kpiRes, spendRes, carrierRes, laneRes] = await Promise.all([
-                    fetch('http://localhost:3001/api/analytics/kpis'),
-                    fetch('http://localhost:3001/api/analytics/spend-trend'),
-                    fetch('http://localhost:3001/api/analytics/carrier-performance'),
-                    fetch('http://localhost:3001/api/analytics/lanes')
+                    authFetch('http://localhost:3001/api/analytics/kpis'),
+                    authFetch('http://localhost:3001/api/analytics/spend-trend'),
+                    authFetch('http://localhost:3001/api/analytics/carrier-performance'),
+                    authFetch('http://localhost:3001/api/analytics/lanes')
                 ]);
                 setKpis(await kpiRes.json());
                 setSpendTrend(await spendRes.json());

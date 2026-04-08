@@ -1,0 +1,61 @@
+prisma:cli:bin Failed to initialize the command state: Error: ENOENT: no such file or directory, open 'C:\Users\eball\AppData\Roaming\prisma-nodejs\Config\commands.json' +701ms
+prisma:config:defineConfig [default]: '{\n  "loadedFromFile": null\n}' +426ms
+prisma:config:defineConfig [config.schema]: 'prisma/schema.prisma' +1ms
+prisma:config:defineConfig [config.datasource]: '{\n' +
+  '  "url": "prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InBvc3RncmVzOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjUxMjE0L3RlbXBsYXRlMT9zc2xtb2RlPWRpc2FibGUmY29ubmVjdGlvbl9saW1pdD0xJmNvbm5lY3RfdGltZW91dD0wJm1heF9pZGxlX2Nvbm5lY3Rpb25fbGlmZXRpbWU9MCZwb29sX3RpbWVvdXQ9MCZzaW5nbGVfdXNlX2Nvbm5lY3Rpb25zPXRydWUmc29ja2V0X3RpbWVvdXQ9MCIsIm5hbWUiOiJkZWZhdWx0Iiwic2hhZG93RGF0YWJhc2VVcmwiOiJwb3N0Z3JlczovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1MTIxNS90ZW1wbGF0ZTE_c3NsbW9kZT1kaXNhYmxlJmNvbm5lY3Rpb25fbGltaXQ9MSZjb25uZWN0X3RpbWVvdXQ9MCZtYXhfaWRsZV9jb25uZWN0aW9uX2xpZmV0aW1lPTAmcG9vbF90aW1lb3V0PTAmc2luZ2xlX3VzZV9jb25uZWN0aW9ucz10cnVlJnNvY2tldF90aW1lb3V0PTAifQ"\n' +
+  '}' +0ms
+prisma:config:defineConfig [config.migrations]: '{\n' +
+  '  "path": "prisma/migrations",\n' +
+  '  "seed": "node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts"\n' +
+  '}' +0ms
+prisma:config:loadConfigFromFile Config file loaded in 65.41ms +1ms
+prisma:config:PrismaConfig Parsing PrismaConfigInternal: '{\n' +
+  '  "loadedFromFile": null,\n' +
+  '  "schema": "prisma/schema.prisma",\n' +
+  '  "datasource": {\n' +
+  '    "url": "prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InBvc3RncmVzOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjUxMjE0L3RlbXBsYXRlMT9zc2xtb2RlPWRpc2FibGUmY29ubmVjdGlvbl9saW1pdD0xJmNvbm5lY3RfdGltZW91dD0wJm1heF9pZGxlX2Nvbm5lY3Rpb25fbGlmZXRpbWU9MCZwb29sX3RpbWVvdXQ9MCZzaW5nbGVfdXNlX2Nvbm5lY3Rpb25zPXRydWUmc29ja2V0X3RpbWVvdXQ9MCIsIm5hbWUiOiJkZWZhdWx0Iiwic2hhZG93RGF0YWJhc2VVcmwiOiJwb3N0Z3JlczovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1MTIxNS90ZW1wbGF0ZTE_c3NsbW9kZT1kaXNhYmxlJmNvbm5lY3Rpb25fbGltaXQ9MSZjb25uZWN0X3RpbWVvdXQ9MCZtYXhfaWRsZV9jb25uZWN0aW9uX2xpZmV0aW1lPTAmcG9vbF90aW1lb3V0PTAmc2luZ2xlX3VzZV9jb25uZWN0aW9ucz10cnVlJnNvY2tldF90aW1lb3V0PTAifQ"\n' +
+  '  },\n' +
+  '  "migrations": {\n' +
+  '    "path": "prisma/migrations",\n' +
+  '    "seed": "node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts"\n' +
+  '  }\n' +
+  '}' +0ms
+prisma:config:PrismaConfig Short-circuit: input is already a PrismaConfigInternal object +1ms
+Loaded Prisma config from prisma.config.ts.
+
+prisma:engines binaries to download schema-engine +766ms
+prisma:getSchema Reading schema from single file C:\Users\eball\Desktop\Code\Thoron\backend\prisma\schema.prisma +70ms
+prisma:getSchema Reading schema from single file C:\Users\eball\Desktop\Code\Thoron\backend\prisma\schema.prisma +0ms
+prisma:getConfig Using getConfig Wasm +14ms
+prisma:getConfig config data retrieved without errors in getConfig Wasm +10ms
+prisma:cli:checkpoint runCheckpointClientCheck(): Execution time for getting info: 26.023799999999937 ms +0ms
+prisma:cli:checkpoint runCheckpointClientCheck(): Execution time for "await checkpoint.check(data)": 28.096199999999953 ms +29ms
+Running seed command `node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts` ...
+(node:26676) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+[Object: null prototype] {
+  Symbol(nodejs.util.inspect.custom): [Function: [nodejs.util.inspect.custom]]
+}
+
+Node.js v24.13.1
+prisma:migrate:seed {
+  "e": {
+    "shortMessage": "Command failed with exit code 1: node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts",
+    "command": "node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts",
+    "escapedCommand": "node \"--experimental-specifier-resolution=node\" --loader \"ts-node/esm\" \"prisma/seed.ts\"",
+    "exitCode": 1,
+    "cwd": "C:\\Users\\eball\\Desktop\\Code\\Thoron\\backend",
+    "failed": true,
+    "timedOut": false,
+    "isCanceled": false,
+    "killed": false
+  }
+} +1133ms
+
+An error occurred while running the seed command:
+Error: Command failed with exit code 1: node --experimental-specifier-resolution=node --loader ts-node/esm prisma/seed.ts

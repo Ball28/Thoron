@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FileCheck, Search, DollarSign, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { useAuth } from './AuthContext';
 import './Invoices.css';
 
 interface InvoiceRow {
@@ -35,6 +36,7 @@ const statusIcon = (status: string) => {
 };
 
 export function Invoices() {
+    const { authFetch } = useAuth();
     const [invoices, setInvoices] = useState<InvoiceRow[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -42,7 +44,7 @@ export function Invoices() {
 
     const fetchInvoices = useCallback(async () => {
         try {
-            const res = await fetch('http://localhost:3001/api/invoices');
+            const res = await authFetch('http://localhost:3001/api/invoices');
             if (res.ok) {
                 setInvoices(await res.json());
             }
@@ -59,7 +61,7 @@ export function Invoices() {
 
     const handleUpdateStatus = async (id: number, status: string) => {
         try {
-            const res = await fetch(`http://localhost:3001/api/invoices/${id}/status`, {
+            const res = await authFetch(`http://localhost:3001/api/invoices/${id}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })

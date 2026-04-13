@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './components/AuthContext';
 import { Login } from './components/Login';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { Dashboard } from './components/Dashboard';
 import { Shipments } from './components/Shipments';
 import { RateQuoting } from './components/RateQuoting';
 import { Carriers } from './components/Carriers';
@@ -36,63 +37,7 @@ function AppContent() {
   const renderContent = () => {
     switch (activeTab) {
       case 'dashboard':
-        return (
-          <div className="dashboard-content">
-            <div className="grid-cards">
-              <div className="card stat-card">
-                <h3>Active Shipments</h3>
-                <div className="stat-value text-primary">124</div>
-                <div className="stat-change text-success">+12% this week</div>
-              </div>
-              <div className="card stat-card">
-                <h3>Pending Quotes</h3>
-                <div className="stat-value text-warning">18</div>
-                <div className="stat-change text-muted">Awaiting approval</div>
-              </div>
-              <div className="card stat-card">
-                <h3>Exceptions</h3>
-                <div className="stat-value text-error">3</div>
-                <div className="stat-change text-error">Requires attention</div>
-              </div>
-            </div>
-
-            <div className="mt-xl card">
-              <h3 className="mb-md">Recent Activity</h3>
-              <div className="table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Reference</th>
-                      <th>Status</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="text-secondary">#SHP-8901</td>
-                      <td>LAX to JFK (Pallet)</td>
-                      <td><span className="badge badge-info">In Transit</span></td>
-                      <td className="text-secondary">Today, 08:30 AM</td>
-                    </tr>
-                    <tr>
-                      <td className="text-secondary">#SHP-8902</td>
-                      <td>CHI to MIA (FTL)</td>
-                      <td><span className="badge badge-warning">Pending</span></td>
-                      <td className="text-secondary">Yesterday, 14:15 PM</td>
-                    </tr>
-                    <tr>
-                      <td className="text-secondary">#SHP-8899</td>
-                      <td>SEA to PHX (LTL)</td>
-                      <td><span className="badge badge-success">Delivered</span></td>
-                      <td className="text-secondary">Oct 24, 11:20 AM</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        );
+        return <Dashboard onNavigate={setActiveTab} />;
       case 'shipments':
         return <Shipments />;
       case 'quotes':
@@ -133,7 +78,7 @@ function AppContent() {
     <div className="app-container">
       <Sidebar activeItem={activeTab} setActiveItem={setActiveTab} userRole={user.role} userName={user.name} onLogout={logout} />
       <main className="main-content">
-        <Header title={getTitle()} />
+        <Header title={getTitle()} onNavigate={setActiveTab} />
         <div className="content-scroll">
           {renderContent()}
         </div>

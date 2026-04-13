@@ -1,12 +1,13 @@
-import React from 'react';
-import { Bell, Search, Hexagon } from 'lucide-react';
+import { Search } from 'lucide-react';
+import { NotificationPanel } from './NotificationPanel';
 import './Header.css';
 
 interface HeaderProps {
     title: string;
+    onNavigate?: (tab: string) => void;
 }
 
-export function Header({ title }: HeaderProps) {
+export function Header({ title, onNavigate }: HeaderProps) {
     return (
         <header className="app-header">
             <div className="header-title-wrapper">
@@ -19,10 +20,7 @@ export function Header({ title }: HeaderProps) {
                     <input type="text" placeholder="Search shipments, quotes, carriers..." />
                 </div>
 
-                <button className="action-btn">
-                    <Bell size={20} />
-                    <span className="badge-indicator"></span>
-                </button>
+                <NotificationPanel onNavigate={onNavigate} />
             </div>
         </header>
     );

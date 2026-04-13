@@ -94,7 +94,21 @@ async function main() {
         ]
     });
 
-    console.log('Seeded demo shipments, events, and documents.');
+    // Notifications
+    await prisma.notification.createMany({
+        data: [
+            { type: 'shipment', title: 'Shipment In Transit', message: 'OLD-4491-2024 has departed Chicago, IL and is en route to Dallas, TX.', link: 'tracking', read: false },
+            { type: 'exception', title: 'Delivery Exception', message: 'EST-9944-2024 encountered a delay in Phoenix, AZ — weather conditions.', link: 'tracking', read: false },
+            { type: 'carrier', title: 'Carrier Rating Updated', message: 'FedEx Freight on-time rate improved to 99.0%. Rating: 4.9/5.', link: 'carriers', read: false },
+            { type: 'document', title: 'Document Verified', message: 'BOL for shipment OLD-4491-2024 has been verified and approved.', link: 'documents', read: true },
+            { type: 'invoice', title: 'Invoice Overdue', message: 'Invoice INV-2024-0087 for XPO Logistics is past due by 5 days.', link: 'invoices', read: false },
+            { type: 'shipment', title: 'Shipment Delivered', message: 'FDX-2211-2024 was successfully delivered to Miami, FL.', link: 'tracking', read: true },
+            { type: 'system', title: 'System Maintenance', message: 'Scheduled maintenance window: April 12, 2:00 AM – 4:00 AM CST.', link: null, read: false },
+            { type: 'order', title: 'New Order Received', message: 'PO #WH-2024-441 from Acme Corp requires load planning.', link: 'orders', read: false },
+        ]
+    });
+
+    console.log('Seeded demo shipments, events, documents, and notifications.');
 }
 
 main()

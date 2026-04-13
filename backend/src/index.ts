@@ -411,6 +411,45 @@ app.put('/api/users/:id/role', requireRole('Admin'), async (req: Request, res: R
         res.status(500).json({ error: err.message });
     }
 });
+// --- Notifications API ---
+app.get('/api/notifications', async (req: Request, res: Response) => {
+    try {
+        const notifications = await db.notification.findMany({
+            orderBy: { createdAt: 'desc' },
+            take: 20
+        });
+        const unreadCount = await db.notification.count({
+            where: { read: false }
+        });
+        res.json({ notifications, unreadCount });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/notifications/:id/read', async (req: Request, res: Response) => {
+    try {
+        await db.notification.update({
+            where: { id: parseInt(req.params.id as string) },
+            data: { read: true }
+        });
+        res.json({ message: 'Notification marked as read' });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.put('/api/notifications/read-all', async (req: Request, res: Response) => {
+    try {
+        await db.notification.updateMany({
+            where: { read: false },
+            data: { read: true }
+        });
+        res.json({ message: 'All notifications marked as read' });
+    } catch (err: any) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
